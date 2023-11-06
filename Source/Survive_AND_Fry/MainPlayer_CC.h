@@ -22,10 +22,6 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	class USpringArmComponent* SpringArmComponent;
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
-	class UCameraComponent* Camera;
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	float TurnRate;
 
 	void MoveForward(float AxisValue);
