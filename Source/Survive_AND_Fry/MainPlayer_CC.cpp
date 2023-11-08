@@ -5,6 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "ItemDesk.h"
+#include "Item.h"
 
 AMainPlayer_CC::AMainPlayer_CC()
 {
@@ -56,10 +57,10 @@ void AMainPlayer_CC::GrabORRelease()
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor != nullptr)
 		{
-			AItemDesk* ItemDesk = Cast<AItemDesk>(HitActor);
-			if (ItemDesk != nullptr)
+			AItemDesk* ItemDeskReference = Cast<AItemDesk>(HitActor);
+			if (ItemDeskReference != nullptr)
 			{
-				DeskFunctions(ItemDesk);
+				DeskFunctions(ItemDeskReference);
 			}
 		}
 	}
@@ -81,7 +82,7 @@ bool AMainPlayer_CC::TraceObject()
 		FVector Start = PlayerTracePointer->GetComponentLocation();
 		FVector End = PlayerTracePointer->GetComponentLocation() + PlayerTracePointer->GetForwardVector() * TraceDistance;
 
-		bool IsHit = GetWorld()->SweepSingleByChannel(Hit, Start, End, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(30.f));
+		bool IsHit = GetWorld()->SweepSingleByChannel(Hit, Start, End, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(SphereSize));
 
 		if (IsHit == true)
 		{
@@ -98,16 +99,22 @@ bool AMainPlayer_CC::TraceObject()
 	else { return false; };
 }
 
-void AMainPlayer_CC::DeskFunctions(AItemDesk* Desk)
+void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 {
-	if (Desk != nullptr)
+	ItemDesk = Cast<AItemDesk>(Desk);
+	if (ItemDesk != nullptr)
 	{
-		AActor* ItemOnDesk = Desk->ItemOnDesk;
+		AActor* ItemOnDesk = ItemDesk->ItemOnDesk;
 		if (ItemOnDesk != nullptr)
 		{
 			if (HoldingItem != nullptr)
 			{
 				//If There Is A Item On The Player & On Another Desk Then This Part Of The Logic Runs
+				AItem* Item = Cast<AItem>(ItemOnDesk);
+				if (Item != nullptr)
+				{
+					Item->CombineItems(this, HoldingItem);
+				}
 				UE_LOG(LogTemp, Display, TEXT("Already Equipped With An Item"));
 			}
 			else
@@ -115,7 +122,7 @@ void AMainPlayer_CC::DeskFunctions(AItemDesk* Desk)
 				ItemOnDesk->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 				HoldingItem = ItemOnDesk;
 				HoldingItem->AttachToComponent(HoldingLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-				Desk->ItemOnDesk = nullptr;
+				ItemDesk->ItemOnDesk = nullptr;
 			}
 		}
 		else
@@ -123,8 +130,8 @@ void AMainPlayer_CC::DeskFunctions(AItemDesk* Desk)
 			if (HoldingItem != nullptr)
 			{
 				HoldingItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-				HoldingItem->AttachToComponent(Desk->ItemLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-				Desk->ItemOnDesk = HoldingItem;
+				HoldingItem->AttachToComponent(ItemDesk->ItemLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+				ItemDesk->ItemOnDesk = HoldingItem;
 				HoldingItem = nullptr;
 			}
 		}

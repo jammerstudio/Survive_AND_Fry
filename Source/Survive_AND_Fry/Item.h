@@ -17,4 +17,7 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void CombineItems(class AMainPlayer_CC* MainPlayer, class AActor* SecondItem);
+private:
 };
