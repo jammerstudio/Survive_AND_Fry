@@ -9,7 +9,7 @@ ABread::ABread()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	RootSceneComponent->SetupAttachment(RootComponent);
+	SetRootComponent(RootSceneComponent);
 
 	BreadTop = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BreadTop"));
 	BreadTop->SetupAttachment(RootSceneComponent);
