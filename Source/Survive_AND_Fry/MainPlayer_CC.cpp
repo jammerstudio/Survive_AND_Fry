@@ -35,6 +35,9 @@ void AMainPlayer_CC::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AMainPlayer_CC::MoveRight);
 
 	PlayerInputComponent->BindAction(TEXT("Grab/Release"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::GrabORRelease);
+	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::StartChopping);
+	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Released, this, &AMainPlayer_CC::StopChopping);
+	PlayerInputComponent->BindAction(TEXT("RemoveItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::RemoveItem);
 
 	FRotator RotationFromMovement = GetVelocity().Rotation();
 	SetActorRotation(RotationFromMovement);
@@ -68,6 +71,27 @@ void AMainPlayer_CC::GrabORRelease()
 	{
 		return;
 	}
+}
+
+void AMainPlayer_CC::StartChopping()
+{
+
+}
+
+void AMainPlayer_CC::StopChopping()
+{
+
+}
+
+void AMainPlayer_CC::RemoveItem()
+{
+	if (HoldingItem != nullptr)
+	{
+		HoldingItem->Destroy();
+		HoldingItem = nullptr;
+	}
+	else
+		return;
 }
 
 bool AMainPlayer_CC::TraceObject()
@@ -104,13 +128,12 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 	ItemDesk = Cast<AItemDesk>(Desk);
 	if (ItemDesk != nullptr)
 	{
-		AActor* ItemOnDesk = ItemDesk->ItemOnDesk;
-		if (ItemOnDesk != nullptr)
+		if (ItemDesk->ItemOnDesk != nullptr)
 		{
 			if (HoldingItem != nullptr)
 			{
 				//If There Is A Item On The Player & On Another Desk Then This Part Of The Logic Runs
-				AItem* Item = Cast<AItem>(ItemOnDesk);
+				AItem* Item = Cast<AItem>(ItemDesk->ItemOnDesk);
 				if (Item != nullptr)
 				{
 					Item->CombineItems(this, HoldingItem);
@@ -119,10 +142,14 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 			}
 			else
 			{
-				ItemOnDesk->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-				HoldingItem = ItemOnDesk;
+				ItemDesk->ItemOnDesk->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				HoldingItem = ItemDesk->ItemOnDesk;
 				HoldingItem->AttachToComponent(HoldingLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 				ItemDesk->ItemOnDesk = nullptr;
+
+				ItemDesk->ItemOnDesk = GetWorld()->SpawnActor<AActor>(ItemDesk->ItemOnDeskReference,
+					ItemDesk->ItemLocation->GetComponentLocation(),
+					ItemDesk->ItemLocation->GetComponentRotation());
 			}
 		}
 		else

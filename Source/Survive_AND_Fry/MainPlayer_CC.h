@@ -20,7 +20,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AActor* HoldingItem;
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -49,6 +49,9 @@ private:
 	void MoveRight(float AxisValue);
 
 	void GrabORRelease();
+	void StartChopping();
+	void StopChopping();
+	void RemoveItem();
 
 	bool TraceObject();
 	void DeskFunctions(class AActor* Desk);
