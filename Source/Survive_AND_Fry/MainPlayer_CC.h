@@ -53,6 +53,8 @@ private:
 
 	class AChoppingDesk* ChoppingDesk;
 
+	class AServingDesk* ServingDesk;
+
 	bool IsChopping = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
@@ -68,4 +70,5 @@ private:
 	bool TraceObject();
 	void DeskFunctions(class AActor* Desk);
 	void ProcessChopping();
+	void ProcessServing();
 };
