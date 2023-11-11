@@ -71,4 +71,5 @@ private:
 	void DeskFunctions(class AActor* Desk);
 	void ProcessChopping();
 	void ProcessServing();
+	void EnlargeItem();
 };
