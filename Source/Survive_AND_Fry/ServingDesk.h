@@ -28,4 +28,8 @@ private:
 	class ABread* Bread;
 
 	int32 RandomScale;
+
+	class APlayerController* PlayerCharacterReference;
+
+	class AMainPlayer_PC* MainPlayer_PC;
 };

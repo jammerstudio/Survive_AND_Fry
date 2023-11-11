@@ -3,6 +3,22 @@
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 
+void AMainPlayer_PC::SetTaskDescription(int32 TaskNumber)
+{
+	if (TaskNumber == 1)
+	{
+		TaskDescription = ("TASK DESCRIPTION\nSingle Scale Sandwich");
+	}
+	if (TaskNumber == 2)
+	{
+		TaskDescription = ("TASK DESCRIPTION\nDouble Scale Sandwich");
+	}
+	if (TaskNumber == 3)
+	{
+		TaskDescription = ("TASK DESCRIPTION\nTriple Scale Sandwich");
+	}
+}
+
 void AMainPlayer_PC::BeginPlay()
 {
 	Super::BeginPlay();

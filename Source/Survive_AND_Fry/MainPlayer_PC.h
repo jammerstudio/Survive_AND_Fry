@@ -12,6 +12,14 @@ class SURVIVE_AND_FRY_API AMainPlayer_PC : public APlayerController
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int TimeLeft;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int ZombiesSaved = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FString TaskDescription;
+
+	void SetTaskDescription(int32 TaskNumber);
 protected:
 	virtual void BeginPlay() override;
 

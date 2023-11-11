@@ -16,6 +16,15 @@ void AServingDesk::BeginPlay()
 {
 	Super::BeginPlay();
 	RandomScale = FMath::RandRange(1, 3);
+	PlayerCharacterReference = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PlayerCharacterReference != nullptr)
+	{
+		MainPlayer_PC = Cast<AMainPlayer_PC>(PlayerCharacterReference);
+		if (MainPlayer_PC != nullptr)
+		{
+			MainPlayer_PC->SetTaskDescription(RandomScale);
+		}
+	}
 	UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
 }
 
@@ -31,24 +40,33 @@ void AServingDesk::ServeItem()
 			RandomScale = FMath::RandRange(1, 3);
 			UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
 			ScaleValue = 1.f;
+			if (PlayerCharacterReference != nullptr)
+			{
+				MainPlayer_PC = Cast<AMainPlayer_PC>(PlayerCharacterReference);
+				if (MainPlayer_PC != nullptr)
+				{
+					MainPlayer_PC->SetTaskDescription(RandomScale);
+					MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved + 1;
+				}
+			}
 			Bread->Destroy();
 		}
 		else
 		{
-			APlayerController* PlayerCharacterReference = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-			if (PlayerCharacterReference != nullptr)
-			{
-				AMainPlayer_PC* MainPlayer_PC = Cast<AMainPlayer_PC>(PlayerCharacterReference);
-				if (MainPlayer_PC != nullptr)
-				{
-					MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft - 10.f;
-				}
-			}
 			ItemOnDesk = nullptr;
 			UE_LOG(LogTemp, Display, TEXT("Wrong Food Served!"));
 			RandomScale = FMath::RandRange(1, 3);
 			UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
 			ScaleValue = 1.f;
+			if (PlayerCharacterReference != nullptr)
+			{
+				MainPlayer_PC = Cast<AMainPlayer_PC>(PlayerCharacterReference);
+				if (MainPlayer_PC != nullptr)
+				{
+					MainPlayer_PC->SetTaskDescription(RandomScale);
+					MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft - 10.f;
+				}
+			}
 			Bread->Destroy();
 		}
 	}
