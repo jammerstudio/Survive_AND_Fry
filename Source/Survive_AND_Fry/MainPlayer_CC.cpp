@@ -8,6 +8,7 @@
 #include "ItemDesk.h"
 #include "Item.h"
 #include "ChoppingDesk.h"
+#include "ServingDesk.h"
 #include "MainPlayer_PC.h"
 
 AMainPlayer_CC::AMainPlayer_CC()
@@ -42,6 +43,7 @@ void AMainPlayer_CC::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction(TEXT("Grab/Release"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::GrabORRelease);
 	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Repeat, this, &AMainPlayer_CC::StartChopping);
+	PlayerInputComponent->BindAction(TEXT("ConfirmOrder"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::ProcessServing);
 	PlayerInputComponent->BindAction(TEXT("RemoveItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::RemoveItem);
 
 	FRotator MovementRotation = GetVelocity().Rotation();
@@ -69,10 +71,6 @@ void AMainPlayer_CC::GrabORRelease()
 			if (ItemDeskReference != nullptr && IsChopping == false)
 			{
 				DeskFunctions(ItemDeskReference);
-			}
-			else
-			{
-				return;
 			}
 		}
 	}
@@ -209,4 +207,20 @@ void AMainPlayer_CC::ProcessChopping()
 		}
 	}
 	else return;
+}
+
+void AMainPlayer_CC::ProcessServing()
+{
+	if (TraceObject())
+	{
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor != nullptr)
+		{
+			ServingDesk = Cast<AServingDesk>(HitActor);
+			if (ServingDesk != nullptr)
+			{
+				ServingDesk->ServeItem();
+			}
+		}
+	}
 }

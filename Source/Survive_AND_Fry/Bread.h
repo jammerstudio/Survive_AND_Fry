@@ -17,6 +17,10 @@ public:
 	class AItem* Item;
 	
 	virtual void CombineItems(class AMainPlayer_CC* MainPlayer, class AActor* SecondItem) override;
+
+	bool HasVegetable = false;
+
+	bool HasAntiDote = false;
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* BreadTop;
@@ -33,8 +37,4 @@ private:
 	class AChoppedVegetable* ChoppedVegetable;
 
 	class AAntiDote* AntiDote;
-
-	bool HasVegetable = false;
-
-	bool HasAntiDote = false;
 };
