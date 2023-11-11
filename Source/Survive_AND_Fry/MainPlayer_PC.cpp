@@ -19,7 +19,7 @@ void AMainPlayer_PC::BeginPlay()
 
 	if (CameraActor != nullptr)
 	{
-		SetViewTargetWithBlend(CameraActor, 2.f, EViewTargetBlendFunction::VTBlend_Linear);
+		SetViewTargetWithBlend(CameraActor, 3.f, EViewTargetBlendFunction::VTBlend_Linear);
 	}
 }
 void AMainPlayer_PC::WaveTimerDelegate()

@@ -34,5 +34,10 @@
 				"Win64"
 			]
 		}
+	],
+	"TargetPlatforms": [
+		"Android",
+		"IOS",
+		"Windows"
 	]
 }

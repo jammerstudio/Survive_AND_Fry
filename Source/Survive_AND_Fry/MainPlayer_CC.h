@@ -22,6 +22,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AActor* HoldingItem;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Progress;
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	float TurnRate;
@@ -35,6 +38,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	class USceneComponent* HoldingLocation;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	class UArrowComponent* PlayerTracePointer;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UMaterialInterface* NormalMaterial;
 
@@ -45,14 +51,21 @@ private:
 
 	class AItemDesk* ItemDesk;
 
+	class AChoppingDesk* ChoppingDesk;
+
+	bool IsChopping = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float MoveSpeed = 300.f;
+
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 
 	void GrabORRelease();
 	void StartChopping();
-	void StopChopping();
 	void RemoveItem();
 
 	bool TraceObject();
 	void DeskFunctions(class AActor* Desk);
+	void ProcessChopping();
 };

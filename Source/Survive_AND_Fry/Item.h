@@ -19,5 +19,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void CombineItems(class AMainPlayer_CC* MainPlayer, class AActor* SecondItem);
+
+	UPROPERTY(VisibleAnywhere)
+	class USceneComponent* RootSceneComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	bool CanBeChopped = false;
+
+	float Progress = 0.f;
+
+	virtual void ChopItem(float Delta);
 private:
 };

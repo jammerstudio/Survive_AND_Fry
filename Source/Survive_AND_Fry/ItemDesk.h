@@ -33,5 +33,7 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AActor> ItemOnDeskReference;
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
+	bool NeedToRespawn = false;
 private:
 };

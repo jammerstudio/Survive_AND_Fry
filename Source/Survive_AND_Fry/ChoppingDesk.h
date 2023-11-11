@@ -12,6 +12,10 @@ class SURVIVE_AND_FRY_API AChoppingDesk : public AItemDesk
 public:
 	AChoppingDesk();
 
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	bool SpawnChoppedActor = true;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* ChoppingBoard;
