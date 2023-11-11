@@ -1,15 +1,13 @@
 #include "Bread.h"
 #include "Item.h"
-#include "Vegetable.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainPlayer_CC.h"
+#include "ChoppedVegetable.h"
+#include "AntiDote.h"
 
 ABread::ABread()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
-	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	SetRootComponent(RootSceneComponent);
 
 	BreadTop = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BreadTop"));
 	BreadTop->SetupAttachment(RootSceneComponent);
@@ -19,6 +17,9 @@ ABread::ABread()
 
 	VegetableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Vegetable"));
 	VegetableMesh->SetupAttachment(RootSceneComponent);
+
+	AntiDoteMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AntiDote"));
+	AntiDoteMesh->SetupAttachment(RootSceneComponent);
 }
 
 void ABread::BeginPlay()
@@ -27,7 +28,11 @@ void ABread::BeginPlay()
 
 	if (VegetableMesh != nullptr)
 	{
-		VegetableMesh->SetVisibility(false);
+		VegetableMesh->SetVisibility(false, true);
+	}
+	if (AntiDoteMesh != nullptr)
+	{
+		AntiDoteMesh->SetVisibility(false, true);
 	}
 }
 
@@ -35,23 +40,43 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 {
 	Super::CombineItems(MainPlayer, SecondItem);
 
-	Vegetable = Cast<AVegetable>(SecondItem);
+	ChoppedVegetable = Cast<AChoppedVegetable>(SecondItem);
 	if (HasVegetable == true)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Bread Has Vegetable Already"));
 	}
 	else
 	{
-		if (Vegetable != nullptr)
+		if (ChoppedVegetable != nullptr)
 		{
-			Vegetable->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			ChoppedVegetable->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			MainPlayer->HoldingItem = nullptr;
 			HasVegetable = true;
-			Vegetable->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-			Vegetable->Destroy();
+			ChoppedVegetable->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			ChoppedVegetable->Destroy();
 			if (VegetableMesh != nullptr)
 			{
-				VegetableMesh->SetVisibility(true);
+				VegetableMesh->SetVisibility(true, true);
+			}
+		}
+	}
+	AntiDote = Cast<AAntiDote>(SecondItem);
+	if (HasAntiDote == true)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Bread Has AntiDote Already"));
+	}
+	else
+	{
+		if (AntiDote != nullptr && HasVegetable == true)
+		{
+			AntiDote->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			MainPlayer->HoldingItem = nullptr;
+			HasAntiDote = true;
+			AntiDote->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			AntiDote->Destroy();
+			if (AntiDoteMesh != nullptr)
+			{
+				AntiDoteMesh->SetVisibility(true, true);
 			}
 		}
 	}

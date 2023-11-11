@@ -14,7 +14,19 @@ public:
 public:
 	virtual void BeginPlay() override;
 
+	virtual void ChopItem(float Delta) override;
+
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float ChoppingSpeed = 2.f;
+
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
-	class USceneComponent* RootSceneComponent;
+	class UWidgetComponent* ProgressWidgetComponent;
+
+	class AMainPlayer_CC* MainPlayer;
+
+	class AChoppingDesk* ChoppingDesk;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AActor> ChoppedItemReference;
 };

@@ -4,8 +4,11 @@
 #include "Components/MeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 #include "ItemDesk.h"
 #include "Item.h"
+#include "ChoppingDesk.h"
+#include "MainPlayer_PC.h"
 
 AMainPlayer_CC::AMainPlayer_CC()
 {
@@ -13,6 +16,9 @@ AMainPlayer_CC::AMainPlayer_CC()
 
 	HoldingLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Holding Location"));
 	HoldingLocation->SetupAttachment(RootComponent);
+
+	PlayerTracePointer = CreateDefaultSubobject<UArrowComponent>(TEXT("TracePointer"));
+	PlayerTracePointer->SetupAttachment(GetMesh());
 }
 
 void AMainPlayer_CC::BeginPlay()
@@ -35,22 +41,21 @@ void AMainPlayer_CC::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AMainPlayer_CC::MoveRight);
 
 	PlayerInputComponent->BindAction(TEXT("Grab/Release"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::GrabORRelease);
-	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::StartChopping);
-	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Released, this, &AMainPlayer_CC::StopChopping);
+	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Repeat, this, &AMainPlayer_CC::StartChopping);
 	PlayerInputComponent->BindAction(TEXT("RemoveItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::RemoveItem);
 
-	FRotator RotationFromMovement = GetVelocity().Rotation();
-	SetActorRotation(RotationFromMovement);
+	FRotator MovementRotation = GetVelocity().Rotation();
+	SetActorRotation(MovementRotation);
 }
 
 void AMainPlayer_CC::MoveForward(float AxisValue)
 {
-	AddMovementInput(GetActorForwardVector() * AxisValue);
+	AddMovementInput(FVector(1, 0, 0) * GetWorld()->DeltaTimeSeconds * MoveSpeed, AxisValue);
 }
 
 void AMainPlayer_CC::MoveRight(float AxisValue)
 {
-	AddMovementInput(GetActorRightVector() * AxisValue);
+	AddMovementInput(FVector(0, 1, 0) *GetWorld()->DeltaTimeSeconds * MoveSpeed, AxisValue);
 }
 
 void AMainPlayer_CC::GrabORRelease()
@@ -61,9 +66,13 @@ void AMainPlayer_CC::GrabORRelease()
 		if (HitActor != nullptr)
 		{
 			AItemDesk* ItemDeskReference = Cast<AItemDesk>(HitActor);
-			if (ItemDeskReference != nullptr)
+			if (ItemDeskReference != nullptr && IsChopping == false)
 			{
 				DeskFunctions(ItemDeskReference);
+			}
+			else
+			{
+				return;
 			}
 		}
 	}
@@ -75,12 +84,18 @@ void AMainPlayer_CC::GrabORRelease()
 
 void AMainPlayer_CC::StartChopping()
 {
-
-}
-
-void AMainPlayer_CC::StopChopping()
-{
-
+	if (TraceObject())
+	{
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor != nullptr)
+		{
+			ChoppingDesk = Cast<AChoppingDesk>(HitActor);
+			if (ChoppingDesk != nullptr)
+			{
+				ProcessChopping();
+			}
+		}
+	}
 }
 
 void AMainPlayer_CC::RemoveItem()
@@ -96,9 +111,6 @@ void AMainPlayer_CC::RemoveItem()
 
 bool AMainPlayer_CC::TraceObject()
 {
-	UArrowComponent* PlayerTracePointer = GetArrowComponent();
-	PlayerTracePointer->GetComponentLocation();
-
 	UMeshComponent* CharacterMesh = GetMesh();
 
 	if (PlayerTracePointer != nullptr && CharacterMesh != nullptr && TraceMaterial != nullptr && NormalMaterial != nullptr)
@@ -145,11 +157,16 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 				ItemDesk->ItemOnDesk->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 				HoldingItem = ItemDesk->ItemOnDesk;
 				HoldingItem->AttachToComponent(HoldingLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-				ItemDesk->ItemOnDesk = nullptr;
-
-				ItemDesk->ItemOnDesk = GetWorld()->SpawnActor<AActor>(ItemDesk->ItemOnDeskReference,
-					ItemDesk->ItemLocation->GetComponentLocation(),
-					ItemDesk->ItemLocation->GetComponentRotation());
+				if (ItemDesk->NeedToRespawn == true)
+				{
+					ItemDesk->ItemOnDesk = GetWorld()->SpawnActor<AActor>(ItemDesk->ItemOnDeskReference,
+						ItemDesk->ItemLocation->GetComponentLocation(),
+						ItemDesk->ItemLocation->GetComponentRotation());
+				}
+				else
+				{
+					ItemDesk->ItemOnDesk = nullptr;
+				}
 			}
 		}
 		else
@@ -163,4 +180,33 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 			}
 		}
 	}
+	else
+	{
+		return;
+	}
+}
+
+void AMainPlayer_CC::ProcessChopping()
+{
+	if (ChoppingDesk != nullptr)
+	{
+		AItem* ItemToBeChopped = Cast<AItem>(ChoppingDesk->ItemOnDesk);
+		if (ItemToBeChopped != nullptr)
+		{
+			APlayerController* MainPlayer_PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			if (MainPlayer_PC != nullptr)
+			{
+				if (ItemToBeChopped->CanBeChopped == true && MainPlayer_PC->IsInputKeyDown(EKeys::LeftControl))
+				{
+					IsChopping = true;
+					ItemToBeChopped->ChopItem(GetWorld()->DeltaTimeSeconds);
+				}
+				else
+				{
+					IsChopping = false;
+				}
+			}
+		}
+	}
+	else return;
 }

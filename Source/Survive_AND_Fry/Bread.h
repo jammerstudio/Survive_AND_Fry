@@ -19,9 +19,6 @@ public:
 	virtual void CombineItems(class AMainPlayer_CC* MainPlayer, class AActor* SecondItem) override;
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
-	class USceneComponent* RootSceneComponent;
-
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* BreadTop;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
@@ -30,7 +27,14 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* VegetableMesh;
 
-	class AVegetable* Vegetable;
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	class UStaticMeshComponent* AntiDoteMesh;
+
+	class AChoppedVegetable* ChoppedVegetable;
+
+	class AAntiDote* AntiDote;
 
 	bool HasVegetable = false;
+
+	bool HasAntiDote = false;
 };
