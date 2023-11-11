@@ -14,6 +14,10 @@ public:
 
 	void ServeItem();
 
+	void EnlargeItem(float ScaleAmount);
+
+	float ScaleValue = 1.f;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -22,4 +26,6 @@ private:
 	class UStaticMeshComponent* ServingBoard;
 
 	class ABread* Bread;
+
+	int32 RandomScale;
 };

@@ -10,6 +10,7 @@
 #include "ChoppingDesk.h"
 #include "ServingDesk.h"
 #include "MainPlayer_PC.h"
+#include "Math/UnrealMathUtility.h"
 
 AMainPlayer_CC::AMainPlayer_CC()
 {
@@ -44,6 +45,7 @@ void AMainPlayer_CC::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Grab/Release"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::GrabORRelease);
 	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Repeat, this, &AMainPlayer_CC::StartChopping);
 	PlayerInputComponent->BindAction(TEXT("ConfirmOrder"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::ProcessServing);
+	PlayerInputComponent->BindAction(TEXT("ScaleItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::EnlargeItem);
 	PlayerInputComponent->BindAction(TEXT("RemoveItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::RemoveItem);
 
 	FRotator MovementRotation = GetVelocity().Rotation();
@@ -220,6 +222,39 @@ void AMainPlayer_CC::ProcessServing()
 			if (ServingDesk != nullptr)
 			{
 				ServingDesk->ServeItem();
+			}
+		}
+	}
+}
+
+void AMainPlayer_CC::EnlargeItem()
+{
+	if (TraceObject())
+	{
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor != nullptr)
+		{
+			ServingDesk = Cast<AServingDesk>(HitActor);
+			if (ServingDesk != nullptr)
+			{
+				APlayerController* MainPlayer_PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+				if (MainPlayer_PC != nullptr)
+				{
+					if (MainPlayer_PC->IsInputKeyDown(EKeys::Left))
+					{
+						ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue - 1.f, 1, 3);
+						ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
+					}
+					if (MainPlayer_PC->IsInputKeyDown(EKeys::Right))
+					{
+						ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue + 1.f, 1, 3);
+						ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
+					}
+					if (MainPlayer_PC->IsInputKeyDown(EKeys::LeftShift))
+					{
+						ServingDesk->ServeItem();
+					}
+				}
 			}
 		}
 	}
