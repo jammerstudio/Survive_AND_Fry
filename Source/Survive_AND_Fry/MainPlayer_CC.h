@@ -23,8 +23,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AActor* HoldingItem;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Progress;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	bool IsHolding = false;
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	float TurnRate;
@@ -47,6 +50,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UMaterialInterface* TraceMaterial;
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	bool IsChopping = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float MoveSpeed = 300.f;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	FString CurrentScaleDescription;
+
 	FHitResult Hit;
 
 	class AItemDesk* ItemDesk;
@@ -54,11 +66,6 @@ private:
 	class AChoppingDesk* ChoppingDesk;
 
 	class AServingDesk* ServingDesk;
-
-	bool IsChopping = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	float MoveSpeed = 300.f;
 
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
@@ -72,4 +79,5 @@ private:
 	void ProcessChopping();
 	void ProcessServing();
 	void EnlargeItem();
+	void SetTaskDescription(float CurrentScale);
 };

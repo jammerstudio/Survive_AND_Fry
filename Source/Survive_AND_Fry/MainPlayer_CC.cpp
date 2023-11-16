@@ -2,7 +2,6 @@
 #include "Engine/World.h"
 #include "Components/ArrowComponent.h"
 #include "Components/MeshComponent.h"
-#include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "ItemDesk.h"
@@ -157,6 +156,7 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 				ItemDesk->ItemOnDesk->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 				HoldingItem = ItemDesk->ItemOnDesk;
 				HoldingItem->AttachToComponent(HoldingLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+				IsHolding = true;
 				if (ItemDesk->NeedToRespawn == true)
 				{
 					ItemDesk->ItemOnDesk = GetWorld()->SpawnActor<AActor>(ItemDesk->ItemOnDeskReference,
@@ -177,6 +177,7 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 				HoldingItem->AttachToComponent(ItemDesk->ItemLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 				ItemDesk->ItemOnDesk = HoldingItem;
 				HoldingItem = nullptr;
+				IsHolding = false;
 			}
 		}
 	}
@@ -243,11 +244,13 @@ void AMainPlayer_CC::EnlargeItem()
 					if (MainPlayer_PC->IsInputKeyDown(EKeys::Left))
 					{
 						ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue - 1.f, 1, 3);
+						SetTaskDescription(ServingDesk->ScaleValue);
 						ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
 					}
 					if (MainPlayer_PC->IsInputKeyDown(EKeys::Right))
 					{
 						ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue + 1.f, 1, 3);
+						SetTaskDescription(ServingDesk->ScaleValue);
 						ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
 					}
 					if (MainPlayer_PC->IsInputKeyDown(EKeys::LeftShift))
@@ -257,5 +260,21 @@ void AMainPlayer_CC::EnlargeItem()
 				}
 			}
 		}
+	}
+}
+
+void AMainPlayer_CC::SetTaskDescription(float CurrentScale)
+{
+	if (CurrentScale == 1.f)
+	{
+		CurrentScaleDescription = ("CURRENT SCALE\n1X");
+	}
+	if (CurrentScale == 2.f)
+	{
+		CurrentScaleDescription = ("CURRENT SCALE\n2X");
+	}
+	if (CurrentScale == 3.f)
+	{
+		CurrentScaleDescription = ("CURRENT SCALE\n3X");
 	}
 }

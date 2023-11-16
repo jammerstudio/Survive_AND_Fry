@@ -4,6 +4,8 @@
 #include "MainPlayer_CC.h"
 #include "ChoppedVegetable.h"
 #include "AntiDote.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 ABread::ABread()
 {
@@ -20,6 +22,9 @@ ABread::ABread()
 
 	AntiDoteMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AntiDote"));
 	AntiDoteMesh->SetupAttachment(RootSceneComponent);
+
+	AntiDoteEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("AntiDoteEffect"));
+	AntiDoteEffect->SetupAttachment(RootSceneComponent);
 }
 
 void ABread::BeginPlay()
@@ -33,6 +38,11 @@ void ABread::BeginPlay()
 	if (AntiDoteMesh != nullptr)
 	{
 		AntiDoteMesh->SetVisibility(false, true);
+	}
+	if (AntiDoteTimerManager != nullptr)
+	{
+		AntiDoteTimerManager->SetTimer(AntiDoteTimerHandle, this, &ABread::DisableEffects, 1.f, false);
+		AntiDoteTimerManager->PauseTimer(AntiDoteTimerHandle);
 	}
 }
 
@@ -51,6 +61,7 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 		{
 			ChoppedVegetable->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			MainPlayer->HoldingItem = nullptr;
+			MainPlayer->IsHolding = false;
 			HasVegetable = true;
 			ChoppedVegetable->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			ChoppedVegetable->Destroy();
@@ -71,13 +82,33 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 		{
 			AntiDote->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			MainPlayer->HoldingItem = nullptr;
+			MainPlayer->IsHolding = false;
 			HasAntiDote = true;
 			AntiDote->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			AntiDote->Destroy();
 			if (AntiDoteMesh != nullptr)
 			{
+				if (AntiDoteEffect != nullptr)
+				{
+					AntiDoteEffect->Activate();
+					AntiDoteTimerManager->UnPauseTimer(AntiDoteTimerHandle);
+				}
 				AntiDoteMesh->SetVisibility(true, true);
 			}
+		}
+	}
+}
+
+void ABread::DisableEffects()
+{
+	float TimeOut = 0.f;
+	TimeOut = TimeOut + 1.f;
+	if (TimeOut <= 3.f)
+	{
+		if (AntiDoteTimerManager != nullptr && AntiDoteEffect != nullptr)
+		{
+			AntiDoteEffect->Deactivate();
+			AntiDoteTimerManager->ClearTimer(AntiDoteTimerHandle);
 		}
 	}
 }
