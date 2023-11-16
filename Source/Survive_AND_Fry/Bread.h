@@ -34,7 +34,16 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* AntiDoteMesh;
 
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	class UNiagaraComponent* AntiDoteEffect;
+
+	class FTimerManager* AntiDoteTimerManager;
+
+	FTimerHandle AntiDoteTimerHandle;
+
 	class AChoppedVegetable* ChoppedVegetable;
 
 	class AAntiDote* AntiDote;
+
+	void DisableEffects();
 };

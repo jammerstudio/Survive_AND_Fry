@@ -12,4 +12,13 @@ public:
 	AChoppedVegetable();
 protected:
 	virtual void BeginPlay() override;
+private:
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	class UNiagaraComponent* ChoppingEffect;
+
+	class FTimerManager* ChoppingTimerManager;
+
+	FTimerHandle ChoppingTimerHandle;
+
+	void DisableEffects();
 };

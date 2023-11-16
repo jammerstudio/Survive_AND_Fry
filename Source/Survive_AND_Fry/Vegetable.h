@@ -23,10 +23,10 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UWidgetComponent* ProgressWidgetComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AActor> ChoppedItemReference;
+
 	class AMainPlayer_CC* MainPlayer;
 
 	class AChoppingDesk* ChoppingDesk;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	TSubclassOf<AActor> ChoppedItemReference;
 };

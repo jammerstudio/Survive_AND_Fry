@@ -25,11 +25,27 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* ServingBoard;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	class USoundBase* SuccessSound;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	class USoundBase* FailSound;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	class UNiagaraComponent* SuccessfullServeEffect;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	class UNiagaraComponent* UnSuccessfullServeEffect;
+
 	class ABread* Bread;
+
+	class AMainPlayer_PC* MainPlayer_PC;
 
 	int32 RandomScale;
 
-	class APlayerController* PlayerCharacterReference;
+	class FTimerManager* TimerManager;
 
-	class AMainPlayer_PC* MainPlayer_PC;
+	FTimerHandle EffectTimerHandle;
+
+	void DisableEffects();
 };

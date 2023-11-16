@@ -28,9 +28,20 @@ private:
 	TSubclassOf<class UUserWidget> HUDWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<class UUserWidget> GameOverWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf <class AActor> WorldCameraClass;
 
 	FTimerHandle WaveTimer;
 
+	UUserWidget* GameOverWidget;
+
 	void WaveTimerDelegate();
+	void CreateGameOverWidget();
+
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
+	void RestartMainLevel();
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
+	void QuitToMainMenu();
 };
