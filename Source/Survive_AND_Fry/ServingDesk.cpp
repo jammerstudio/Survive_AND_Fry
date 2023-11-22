@@ -33,13 +33,14 @@ void AServingDesk::BeginPlay()
 	GetWorldTimerManager().PauseTimer(EffectTimerHandle);
 
 	RandomScale = FMath::RandRange(1, 3);
+	RandomIngredients = FMath::RandRange(1, 2);
 	APlayerController* PlayerControllerReference = UGameplayStatics::GetPlayerController(this, 0);
 	if (PlayerControllerReference != nullptr)
 	{
 		MainPlayer_PC = Cast<AMainPlayer_PC>(PlayerControllerReference);
 		if (MainPlayer_PC != nullptr)
 		{
-			MainPlayer_PC->SetTaskDescription(RandomScale);
+			MainPlayer_PC->SetTaskDescription(RandomScale, RandomIngredients);
 		}
 	}
 	ACharacter* PlayerCharacterReference = UGameplayStatics::GetPlayerCharacter(this, 0);
@@ -48,6 +49,7 @@ void AServingDesk::BeginPlay()
 		MainPlayer_CC = Cast<AMainPlayer_CC>(PlayerCharacterReference);
 	}
 	UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
+	UE_LOG(LogTemp, Display, TEXT("Random Ingredients : %d"), RandomIngredients);
 }
 
 void AServingDesk::DisableEffects()
@@ -75,51 +77,107 @@ void AServingDesk::ServeItem()
 		{
 			MainPlayer_CC->SetTaskDescription(0.f);
 		}
-		if (Bread->HasVegetable == true && Bread->HasAntiDote == true && RandomScale == ScaleValue)
+		if (RandomIngredients == 1)
 		{
-			ItemOnDesk = nullptr;
-			UE_LOG(LogTemp, Display, TEXT("Food Served!"));
-			RandomScale = FMath::RandRange(1, 3);
-			UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
-			ScaleValue = 1.f;
-			if (MainPlayer_PC != nullptr)
+			if (Bread->HasTomato == true && Bread->HasAntiDote == true && RandomScale == ScaleValue)
 			{
-				MainPlayer_PC->SetTaskDescription(RandomScale);
-				MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved + 1;
-				if (SuccessfullServeEffect != nullptr)
+				ItemOnDesk = nullptr;
+				UE_LOG(LogTemp, Display, TEXT("Food Served!"));
+				RandomScale = FMath::RandRange(1, 3);
+				RandomIngredients = FMath::RandRange(1, 2);
+				UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
+				ScaleValue = 1.f;
+				if (MainPlayer_PC != nullptr)
 				{
-					SuccessfullServeEffect->Activate();
-					GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+					MainPlayer_PC->SetTaskDescription(RandomScale, RandomIngredients);
+					MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved + 1;
+					if (SuccessfullServeEffect != nullptr)
+					{
+						SuccessfullServeEffect->Activate();
+						GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+					}
+					if (SuccessSound != nullptr)
+					{
+						UGameplayStatics::PlaySound2D(GetWorld(), SuccessSound);
+					}
 				}
-				if (SuccessSound != nullptr)
-				{
-					UGameplayStatics::PlaySound2D(GetWorld(), SuccessSound);
-				}
+				Bread->Destroy();
 			}
-			Bread->Destroy();
+			else
+			{
+				ItemOnDesk = nullptr;
+				UE_LOG(LogTemp, Display, TEXT("Wrong Food Served!"));
+				RandomScale = FMath::RandRange(1, 3);
+				RandomIngredients = FMath::RandRange(1, 2);
+				UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
+				ScaleValue = 1.f;
+				if (MainPlayer_PC != nullptr)
+				{
+					MainPlayer_PC->SetTaskDescription(RandomScale, RandomIngredients);
+					MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft - 10.f;
+					if (UnSuccessfullServeEffect != nullptr)
+					{
+						UnSuccessfullServeEffect->Activate();
+						GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+					}
+					if (FailSound != nullptr)
+					{
+						UGameplayStatics::PlaySound2D(GetWorld(), FailSound);
+					}
+				}
+				Bread->Destroy();
+			}
 		}
-		else
+		if (RandomIngredients == 2)
 		{
-			ItemOnDesk = nullptr;
-			UE_LOG(LogTemp, Display, TEXT("Wrong Food Served!"));
-			RandomScale = FMath::RandRange(1, 3);
-			UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
-			ScaleValue = 1.f;
-			if (MainPlayer_PC != nullptr)
+			if (Bread->HasLettuce == true && Bread->HasAntiDote == true && RandomScale == ScaleValue)
 			{
-				MainPlayer_PC->SetTaskDescription(RandomScale);
-				MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft - 10.f;
-				if (UnSuccessfullServeEffect != nullptr)
+				ItemOnDesk = nullptr;
+				UE_LOG(LogTemp, Display, TEXT("Food Served!"));
+				RandomScale = FMath::RandRange(1, 3);
+				RandomIngredients = FMath::RandRange(1, 2);
+				UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
+				ScaleValue = 1.f;
+				if (MainPlayer_PC != nullptr)
 				{
-					UnSuccessfullServeEffect->Activate();
-					GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+					MainPlayer_PC->SetTaskDescription(RandomScale, RandomIngredients);
+					MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved + 1;
+					if (SuccessfullServeEffect != nullptr)
+					{
+						SuccessfullServeEffect->Activate();
+						GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+					}
+					if (SuccessSound != nullptr)
+					{
+						UGameplayStatics::PlaySound2D(GetWorld(), SuccessSound);
+					}
 				}
-				if (FailSound != nullptr)
-				{
-					UGameplayStatics::PlaySound2D(GetWorld(), FailSound);
-				}
+				Bread->Destroy();
 			}
-			Bread->Destroy();
+			else
+			{
+				ItemOnDesk = nullptr;
+				UE_LOG(LogTemp, Display, TEXT("Wrong Food Served!"));
+				RandomScale = FMath::RandRange(1, 3);
+				RandomIngredients = FMath::RandRange(1, 2);
+				UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
+				ScaleValue = 1.f;
+				if (MainPlayer_PC != nullptr)
+				{
+					MainPlayer_PC->SetTaskDescription(RandomScale, RandomIngredients);
+					MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft - 10.f;
+					if (UnSuccessfullServeEffect != nullptr)
+					{
+						UnSuccessfullServeEffect->Activate();
+						GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+					}
+					if (FailSound != nullptr)
+					{
+						UGameplayStatics::PlaySound2D(GetWorld(), FailSound);
+					}
+				}
+				Bread->Destroy();
+			}
 		}
 	}
 }

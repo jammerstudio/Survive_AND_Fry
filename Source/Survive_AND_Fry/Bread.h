@@ -22,6 +22,12 @@ public:
 	bool HasVegetable = false;
 
 	UPROPERTY(BlueprintReadWrite)
+	bool HasTomato = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool HasLettuce = false;
+
+	UPROPERTY(BlueprintReadWrite)
 	bool HasAntiDote = false;
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
@@ -42,6 +48,10 @@ private:
 	FTimerHandle AntiDoteTimerHandle;
 
 	class AChoppedVegetable* ChoppedVegetable;
+
+	class AChoppedTomato* ChoppedTomato;
+
+	class AChoppedLettuce* ChoppedLettuce;
 
 	class AAntiDote* AntiDote;
 

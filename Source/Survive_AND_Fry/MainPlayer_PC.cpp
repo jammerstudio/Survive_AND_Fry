@@ -5,19 +5,40 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "MainPlayer_CC.h"
 
-void AMainPlayer_PC::SetTaskDescription(int32 TaskNumber)
+void AMainPlayer_PC::SetTaskDescription(int32 TaskNumber, int32 IngredientNumber)
 {
 	if (TaskNumber == 1)
 	{
-		TaskDescription = ("TASK DESCRIPTION\nSingle Scale Sandwich");
+		if (IngredientNumber == 1)
+		{
+			TaskDescription = ("TASK DESCRIPTION\nSingle Scale Tomato Sandwich");
+		}
+		if (IngredientNumber == 2)
+		{
+			TaskDescription = ("TASK DESCRIPTION\nSingle Scale Lettuce Sandwich");
+		}
 	}
 	if (TaskNumber == 2)
 	{
-		TaskDescription = ("TASK DESCRIPTION\nDouble Scale Sandwich");
+		if (IngredientNumber == 1)
+		{
+			TaskDescription = ("TASK DESCRIPTION\nDouble Scale Tomato Sandwich");
+		}
+		if (IngredientNumber == 2)
+		{
+			TaskDescription = ("TASK DESCRIPTION\nDouble Scale Lettuce Sandwich");
+		}
 	}
 	if (TaskNumber == 3)
 	{
-		TaskDescription = ("TASK DESCRIPTION\nTriple Scale Sandwich");
+		if (IngredientNumber == 1)
+		{
+			TaskDescription = ("TASK DESCRIPTION\nTriple Scale Tomato Sandwich");
+		}
+		if (IngredientNumber == 2)
+		{
+			TaskDescription = ("TASK DESCRIPTION\nTriple Scale Lettuce Sandwich");
+		}
 	}
 }
 

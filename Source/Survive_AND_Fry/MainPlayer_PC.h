@@ -19,7 +19,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FString TaskDescription;
 
-	void SetTaskDescription(int32 TaskNumber);
+	void SetTaskDescription(int32 TaskNumber, int32 IngredientNumber);
 protected:
 	virtual void BeginPlay() override;
 
