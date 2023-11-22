@@ -39,11 +39,9 @@ void ABread::BeginPlay()
 	{
 		AntiDoteMesh->SetVisibility(false, true);
 	}
-	if (AntiDoteTimerManager != nullptr)
-	{
-		AntiDoteTimerManager->SetTimer(AntiDoteTimerHandle, this, &ABread::DisableEffects, 1.f, false);
-		AntiDoteTimerManager->PauseTimer(AntiDoteTimerHandle);
-	}
+	
+	GetWorldTimerManager().SetTimer(AntiDoteTimerHandle, this, &ABread::DisableEffects, 1.f, true);
+	GetWorldTimerManager().PauseTimer(AntiDoteTimerHandle);
 }
 
 void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
@@ -78,7 +76,7 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 	}
 	else
 	{
-		if (AntiDote != nullptr && HasVegetable == true)
+		if (AntiDote != nullptr)
 		{
 			AntiDote->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			MainPlayer->HoldingItem = nullptr;
@@ -91,7 +89,7 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 				if (AntiDoteEffect != nullptr)
 				{
 					AntiDoteEffect->Activate();
-					AntiDoteTimerManager->UnPauseTimer(AntiDoteTimerHandle);
+					GetWorldTimerManager().UnPauseTimer(AntiDoteTimerHandle);
 				}
 				AntiDoteMesh->SetVisibility(true, true);
 			}
@@ -101,14 +99,13 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 
 void ABread::DisableEffects()
 {
-	float TimeOut = 0.f;
 	TimeOut = TimeOut + 1.f;
 	if (TimeOut <= 3.f)
 	{
-		if (AntiDoteTimerManager != nullptr && AntiDoteEffect != nullptr)
+		if (AntiDoteEffect != nullptr)
 		{
 			AntiDoteEffect->Deactivate();
-			AntiDoteTimerManager->ClearTimer(AntiDoteTimerHandle);
+			GetWorldTimerManager().ClearTimer(AntiDoteTimerHandle);
 		}
 	}
 }

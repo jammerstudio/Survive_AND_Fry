@@ -14,23 +14,22 @@ void AChoppedVegetable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ChoppingTimerManager != nullptr && ChoppingEffect != nullptr)
+	if (ChoppingEffect != nullptr)
 	{
 		ChoppingEffect->Activate();
-		ChoppingTimerManager->SetTimer(ChoppingTimerHandle, this, &AChoppedVegetable::DisableEffects, 1.f, false);
+		GetWorldTimerManager().SetTimer(ChoppingTimerHandle, this, &AChoppedVegetable::DisableEffects, 1.f, true);
 	}
 }
 
 void AChoppedVegetable::DisableEffects()
 {
-	float TimeOut = 0.f;
 	TimeOut = TimeOut + 1.f;
-	if (TimeOut <= 3.f)
+	if (TimeOut >= 3.f)
 	{
-		if (ChoppingTimerManager != nullptr && ChoppingEffect != nullptr)
+		if (ChoppingEffect != nullptr)
 		{
 			ChoppingEffect->Deactivate();
-			ChoppingTimerManager->ClearTimer(ChoppingTimerHandle);
+			GetWorldTimerManager().ClearTimer(ChoppingTimerHandle);
 		}
 	}
 }

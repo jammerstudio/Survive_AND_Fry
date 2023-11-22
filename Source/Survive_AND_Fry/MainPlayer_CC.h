@@ -28,6 +28,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	bool IsHolding = false;
+
+	void SetTaskDescription(float CurrentScale);
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	float TurnRate;
@@ -67,6 +69,8 @@ private:
 
 	class AServingDesk* ServingDesk;
 
+	FTimerHandle ChoppingHandle;
+
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 
@@ -79,5 +83,4 @@ private:
 	void ProcessChopping();
 	void ProcessServing();
 	void EnlargeItem();
-	void SetTaskDescription(float CurrentScale);
 };
