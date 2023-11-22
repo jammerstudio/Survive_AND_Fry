@@ -10,6 +10,8 @@
 #include "ServingDesk.h"
 #include "MainPlayer_PC.h"
 #include "Math/UnrealMathUtility.h"
+#include "Bread.h"
+#include "TimerManager.h"
 
 AMainPlayer_CC::AMainPlayer_CC()
 {
@@ -25,6 +27,10 @@ AMainPlayer_CC::AMainPlayer_CC()
 void AMainPlayer_CC::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetTaskDescription(0.f);
+
+	GetWorldTimerManager().SetTimer(ChoppingHandle, this, &AMainPlayer_CC::StartChopping, 0.3, true);
 }
 
 void AMainPlayer_CC::Tick(float DeltaTime)
@@ -42,7 +48,7 @@ void AMainPlayer_CC::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AMainPlayer_CC::MoveRight);
 
 	PlayerInputComponent->BindAction(TEXT("Grab/Release"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::GrabORRelease);
-	PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Repeat, this, &AMainPlayer_CC::StartChopping);
+	//PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Repeat, this, &AMainPlayer_CC::StartChopping);
 	PlayerInputComponent->BindAction(TEXT("ConfirmOrder"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::ProcessServing);
 	PlayerInputComponent->BindAction(TEXT("ScaleItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::EnlargeItem);
 	PlayerInputComponent->BindAction(TEXT("RemoveItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::RemoveItem);
@@ -101,8 +107,13 @@ void AMainPlayer_CC::RemoveItem()
 {
 	if (HoldingItem != nullptr)
 	{
+		if (ServingDesk->ItemOnDesk == nullptr && HoldingItem == ServingDesk->Bread)
+		{
+			SetTaskDescription(0.f);
+		}
 		HoldingItem->Destroy();
 		HoldingItem = nullptr;
+		IsHolding = false;
 	}
 	else
 		return;
@@ -118,6 +129,8 @@ bool AMainPlayer_CC::TraceObject()
 		FVector End = PlayerTracePointer->GetComponentLocation() + PlayerTracePointer->GetForwardVector() * TraceDistance;
 
 		bool IsHit = GetWorld()->SweepSingleByChannel(Hit, Start, End, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(SphereSize));
+
+		DrawDebugSphere(GetWorld(), End, SphereSize, 12, FColor::Red, false);
 
 		if (IsHit == true)
 		{
@@ -175,7 +188,16 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 			{
 				HoldingItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 				HoldingItem->AttachToComponent(ItemDesk->ItemLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-				ItemDesk->ItemOnDesk = HoldingItem;
+				ItemDesk->ItemOnDesk = HoldingItem; 
+				if (ItemDesk == ServingDesk && (ServingDesk->Bread = Cast<ABread>(ItemDesk->ItemOnDesk)))
+				{
+					SetTaskDescription(1.f);
+					if (ServingDesk != nullptr)
+					{
+						ServingDesk->ScaleValue = 1.f;
+						ServingDesk->EnlargeItem(1.f);
+					}
+				}
 				HoldingItem = nullptr;
 				IsHolding = false;
 			}
@@ -194,17 +216,21 @@ void AMainPlayer_CC::ProcessChopping()
 		AItem* ItemToBeChopped = Cast<AItem>(ChoppingDesk->ItemOnDesk);
 		if (ItemToBeChopped != nullptr)
 		{
-			APlayerController* MainPlayer_PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-			if (MainPlayer_PC != nullptr)
+			APlayerController* MainPlayer_PC_Reference = UGameplayStatics::GetPlayerController(this, 0);
+			if (MainPlayer_PC_Reference != nullptr)
 			{
-				if (ItemToBeChopped->CanBeChopped == true && MainPlayer_PC->IsInputKeyDown(EKeys::LeftControl))
+				AMainPlayer_PC* MainPlayer_PC = Cast<AMainPlayer_PC>(MainPlayer_PC_Reference);
+				if (MainPlayer_PC != nullptr)
 				{
-					IsChopping = true;
-					ItemToBeChopped->ChopItem(GetWorld()->DeltaTimeSeconds);
-				}
-				else
-				{
-					IsChopping = false;
+					if (ItemToBeChopped->CanBeChopped == true && MainPlayer_PC->IsInputKeyDown(EKeys::LeftControl))
+					{
+						IsChopping = true;
+						ItemToBeChopped->ChopItem(GetWorld()->DeltaTimeSeconds * 3.f);
+					}
+					else
+					{
+						IsChopping = false;
+					}
 				}
 			}
 		}
@@ -238,25 +264,33 @@ void AMainPlayer_CC::EnlargeItem()
 			ServingDesk = Cast<AServingDesk>(HitActor);
 			if (ServingDesk != nullptr)
 			{
-				APlayerController* MainPlayer_PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-				if (MainPlayer_PC != nullptr)
+				if (ServingDesk->Bread = Cast<ABread>(ServingDesk->ItemOnDesk))
 				{
-					if (MainPlayer_PC->IsInputKeyDown(EKeys::Left))
+					SetTaskDescription(1.f);
+					APlayerController* MainPlayer_PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+					if (MainPlayer_PC != nullptr)
 					{
-						ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue - 1.f, 1, 3);
-						SetTaskDescription(ServingDesk->ScaleValue);
-						ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
+						if (MainPlayer_PC->IsInputKeyDown(EKeys::Left))
+						{
+							ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue - 1.f, 1, 3);
+							SetTaskDescription(ServingDesk->ScaleValue);
+							ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
+						}
+						if (MainPlayer_PC->IsInputKeyDown(EKeys::Right))
+						{
+							ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue + 1.f, 1, 3);
+							SetTaskDescription(ServingDesk->ScaleValue);
+							ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
+						}
+						if (MainPlayer_PC->IsInputKeyDown(EKeys::LeftShift))
+						{
+							ServingDesk->ServeItem();
+						}
 					}
-					if (MainPlayer_PC->IsInputKeyDown(EKeys::Right))
-					{
-						ServingDesk->ScaleValue = FMath::Clamp(ServingDesk->ScaleValue + 1.f, 1, 3);
-						SetTaskDescription(ServingDesk->ScaleValue);
-						ServingDesk->EnlargeItem(ServingDesk->ScaleValue);
-					}
-					if (MainPlayer_PC->IsInputKeyDown(EKeys::LeftShift))
-					{
-						ServingDesk->ServeItem();
-					}
+				}
+				else
+				{
+					SetTaskDescription(0.f);
 				}
 			}
 		}
@@ -265,6 +299,10 @@ void AMainPlayer_CC::EnlargeItem()
 
 void AMainPlayer_CC::SetTaskDescription(float CurrentScale)
 {
+	if (CurrentScale == 0.f)
+	{
+		CurrentScaleDescription = ("CURRENT SCALE\nN/A");
+	}
 	if (CurrentScale == 1.f)
 	{
 		CurrentScaleDescription = ("CURRENT SCALE\n1X");

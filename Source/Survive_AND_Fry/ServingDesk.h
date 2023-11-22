@@ -18,6 +18,8 @@ public:
 
 	float ScaleValue = 1.f;
 
+	class ABread* Bread;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -37,13 +39,13 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UNiagaraComponent* UnSuccessfullServeEffect;
 
-	class ABread* Bread;
-
 	class AMainPlayer_PC* MainPlayer_PC;
+
+	class AMainPlayer_CC* MainPlayer_CC;
 
 	int32 RandomScale;
 
-	class FTimerManager* TimerManager;
+	float TimeOut = 0.f;
 
 	FTimerHandle EffectTimerHandle;
 

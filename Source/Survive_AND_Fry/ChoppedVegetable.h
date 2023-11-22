@@ -16,9 +16,9 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UNiagaraComponent* ChoppingEffect;
 
-	class FTimerManager* ChoppingTimerManager;
-
 	FTimerHandle ChoppingTimerHandle;
+
+	float TimeOut = 0.f;
 
 	void DisableEffects();
 };

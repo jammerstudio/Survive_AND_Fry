@@ -13,6 +13,8 @@ AServingDesk::AServingDesk()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	SetRootComponent(DefaultSceneRoot);
+
 	ServingBoard = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ServingBoard"));
 	ServingBoard->SetupAttachment(DefaultSceneRoot);
 
@@ -27,41 +29,38 @@ void AServingDesk::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (TimerManager != nullptr)
-	{
-		TimerManager->SetTimer(EffectTimerHandle, this, &AServingDesk::DisableEffects , 1.f, false);
-		TimerManager->PauseTimer(EffectTimerHandle);
-	}
+	GetWorldTimerManager().SetTimer(EffectTimerHandle, this, &AServingDesk::DisableEffects , 1.f, true);
+	GetWorldTimerManager().PauseTimer(EffectTimerHandle);
 
 	RandomScale = FMath::RandRange(1, 3);
-	APlayerController* PlayerCharacterReference = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PlayerCharacterReference != nullptr)
+	APlayerController* PlayerControllerReference = UGameplayStatics::GetPlayerController(this, 0);
+	if (PlayerControllerReference != nullptr)
 	{
-		MainPlayer_PC = Cast<AMainPlayer_PC>(PlayerCharacterReference);
+		MainPlayer_PC = Cast<AMainPlayer_PC>(PlayerControllerReference);
 		if (MainPlayer_PC != nullptr)
 		{
 			MainPlayer_PC->SetTaskDescription(RandomScale);
 		}
 	}
-	UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
-	if (SuccessfullServeEffect != nullptr && UnSuccessfullServeEffect != nullptr)
+	ACharacter* PlayerCharacterReference = UGameplayStatics::GetPlayerCharacter(this, 0);
+	if (PlayerCharacterReference != nullptr)
 	{
-		SuccessfullServeEffect->Deactivate();
-		UnSuccessfullServeEffect->Deactivate();
+		MainPlayer_CC = Cast<AMainPlayer_CC>(PlayerCharacterReference);
 	}
+	UE_LOG(LogTemp, Display, TEXT("Random Scale : %d"), RandomScale);
 }
 
 void AServingDesk::DisableEffects()
 {
-	float TimeOut = 0.f;
 	TimeOut = TimeOut + 1.f;
-	if (TimeOut <= 3.f)
+	UE_LOG(LogTemp, Display, TEXT("Timeout : %f"), TimeOut);
+	if (TimeOut >= 3.f)
 	{
-		if (SuccessfullServeEffect != nullptr && UnSuccessfullServeEffect != nullptr && TimerManager != nullptr)
+		if (SuccessfullServeEffect != nullptr && UnSuccessfullServeEffect != nullptr)
 		{
 			SuccessfullServeEffect->Deactivate();
 			UnSuccessfullServeEffect->Deactivate();
-			TimerManager->PauseTimer(EffectTimerHandle);
+			GetWorldTimerManager().PauseTimer(EffectTimerHandle);
 			TimeOut = 0.f;
 		}
 	}
@@ -72,6 +71,10 @@ void AServingDesk::ServeItem()
 	Bread = Cast<ABread>(ItemOnDesk);
 	if (Bread != nullptr)
 	{
+		if (MainPlayer_CC != nullptr)
+		{
+			MainPlayer_CC->SetTaskDescription(0.f);
+		}
 		if (Bread->HasVegetable == true && Bread->HasAntiDote == true && RandomScale == ScaleValue)
 		{
 			ItemOnDesk = nullptr;
@@ -83,12 +86,14 @@ void AServingDesk::ServeItem()
 			{
 				MainPlayer_PC->SetTaskDescription(RandomScale);
 				MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved + 1;
-				if (SuccessfullServeEffect != nullptr && SuccessSound != nullptr && TimerManager!= nullptr)
+				if (SuccessfullServeEffect != nullptr)
+				{
+					SuccessfullServeEffect->Activate();
+					GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+				}
+				if (SuccessSound != nullptr)
 				{
 					UGameplayStatics::PlaySound2D(GetWorld(), SuccessSound);
-					SuccessfullServeEffect->Activate();
-
-					TimerManager->UnPauseTimer(EffectTimerHandle);
 				}
 			}
 			Bread->Destroy();
@@ -104,12 +109,14 @@ void AServingDesk::ServeItem()
 			{
 				MainPlayer_PC->SetTaskDescription(RandomScale);
 				MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft - 10.f;
-				if (UnSuccessfullServeEffect != nullptr && FailSound != nullptr && TimerManager != nullptr)
+				if (UnSuccessfullServeEffect != nullptr)
+				{
+					UnSuccessfullServeEffect->Activate();
+					GetWorldTimerManager().UnPauseTimer(EffectTimerHandle);
+				}
+				if (FailSound != nullptr)
 				{
 					UGameplayStatics::PlaySound2D(GetWorld(), FailSound);
-					UnSuccessfullServeEffect->Activate();
-
-					TimerManager->UnPauseTimer(EffectTimerHandle);
 				}
 			}
 			Bread->Destroy();
@@ -122,10 +129,18 @@ void AServingDesk::EnlargeItem(float ScaleAmount)
 	Bread = Cast<ABread>(ItemOnDesk);
 	if (Bread != nullptr)
 	{
-		if (Bread->HasVegetable == true && Bread->HasAntiDote == true)
+		if (ScaleAmount == 1)
 		{
-			Bread->SetActorScale3D(FVector(ScaleAmount, ScaleAmount, 1));
-			UE_LOG(LogTemp, Log, TEXT("Scale Is : %f"), ScaleAmount);
+			Bread->SetActorScale3D(FVector(1, 1, 1));
 		}
+		else if (ScaleAmount == 2)
+		{
+			Bread->SetActorScale3D(FVector(1.5, 1.5, 1));
+		}
+		else
+		{
+			Bread->SetActorScale3D(FVector(2, 2, 1));
+		}
+		UE_LOG(LogTemp, Log, TEXT("Scale Is : %f"), ScaleAmount);
 	}
 }

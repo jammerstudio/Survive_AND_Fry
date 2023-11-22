@@ -18,8 +18,10 @@ public:
 	
 	virtual void CombineItems(class AMainPlayer_CC* MainPlayer, class AActor* SecondItem) override;
 
+	UPROPERTY(BlueprintReadWrite)
 	bool HasVegetable = false;
 
+	UPROPERTY(BlueprintReadWrite)
 	bool HasAntiDote = false;
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
@@ -37,13 +39,13 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UNiagaraComponent* AntiDoteEffect;
 
-	class FTimerManager* AntiDoteTimerManager;
-
 	FTimerHandle AntiDoteTimerHandle;
 
 	class AChoppedVegetable* ChoppedVegetable;
 
 	class AAntiDote* AntiDote;
+
+	float TimeOut = 0.f;
 
 	void DisableEffects();
 };
