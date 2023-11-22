@@ -2,7 +2,8 @@
 #include "Item.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainPlayer_CC.h"
-#include "ChoppedVegetable.h"
+#include "ChoppedTomato.h"
+#include "ChoppedLettuce.h"
 #include "AntiDote.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -48,53 +49,77 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 {
 	Super::CombineItems(MainPlayer, SecondItem);
 
-	ChoppedVegetable = Cast<AChoppedVegetable>(SecondItem);
-	if (HasVegetable == true)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Bread Has Vegetable Already"));
-	}
-	else
-	{
-		if (ChoppedVegetable != nullptr)
+	ChoppedTomato = Cast<AChoppedTomato>(SecondItem);
+	
+		if (HasTomato == true)
 		{
-			ChoppedVegetable->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			MainPlayer->HoldingItem = nullptr;
-			MainPlayer->IsHolding = false;
-			HasVegetable = true;
-			ChoppedVegetable->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-			ChoppedVegetable->Destroy();
-			if (VegetableMesh != nullptr)
-			{
-				VegetableMesh->SetVisibility(true, true);
-			}
+			UE_LOG(LogTemp, Display, TEXT("Bread Has Tomato Already"));
 		}
-	}
-	AntiDote = Cast<AAntiDote>(SecondItem);
-	if (HasAntiDote == true)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Bread Has AntiDote Already"));
-	}
-	else
-	{
-		if (AntiDote != nullptr)
+		else
 		{
-			AntiDote->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			MainPlayer->HoldingItem = nullptr;
-			MainPlayer->IsHolding = false;
-			HasAntiDote = true;
-			AntiDote->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-			AntiDote->Destroy();
-			if (AntiDoteMesh != nullptr)
+			if (ChoppedTomato != nullptr)
 			{
-				if (AntiDoteEffect != nullptr)
+				ChoppedTomato->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				MainPlayer->HoldingItem = nullptr;
+				MainPlayer->IsHolding = false;
+				HasTomato = true;
+				ChoppedTomato->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+				ChoppedTomato->Destroy();
+				if (VegetableMesh != nullptr)
 				{
-					AntiDoteEffect->Activate();
-					GetWorldTimerManager().UnPauseTimer(AntiDoteTimerHandle);
+					VegetableMesh->SetVisibility(true, true);
 				}
-				AntiDoteMesh->SetVisibility(true, true);
 			}
 		}
-	}
+
+	ChoppedLettuce = Cast<AChoppedLettuce>(SecondItem);
+		if (HasLettuce == true)
+		{
+			UE_LOG(LogTemp, Display, TEXT("Bread Has Tomato Already"));
+		}
+		else
+		{
+			if (ChoppedLettuce != nullptr)
+			{
+				ChoppedLettuce->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				MainPlayer->HoldingItem = nullptr;
+				MainPlayer->IsHolding = false;
+				HasLettuce = true;
+				ChoppedLettuce->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+				ChoppedLettuce->Destroy();
+				if (VegetableMesh != nullptr)
+				{
+					VegetableMesh->SetVisibility(true, true);
+				}
+			}
+		}
+	
+		AntiDote = Cast<AAntiDote>(SecondItem);
+		if (HasAntiDote == true)
+		{
+			UE_LOG(LogTemp, Display, TEXT("Bread Has AntiDote Already"));
+		}
+		else
+		{
+			if (AntiDote != nullptr)
+			{
+				AntiDote->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				MainPlayer->HoldingItem = nullptr;
+				MainPlayer->IsHolding = false;
+				HasAntiDote = true;
+				AntiDote->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+				AntiDote->Destroy();
+				if (AntiDoteMesh != nullptr)
+				{
+					if (AntiDoteEffect != nullptr)
+					{
+						AntiDoteEffect->Activate();
+						GetWorldTimerManager().UnPauseTimer(AntiDoteTimerHandle);
+					}
+					AntiDoteMesh->SetVisibility(true, true);
+				}
+			}
+		}
 }
 
 void ABread::DisableEffects()

@@ -45,6 +45,8 @@ private:
 
 	int32 RandomScale;
 
+	int32 RandomIngredients;
+
 	float TimeOut = 0.f;
 
 	FTimerHandle EffectTimerHandle;
