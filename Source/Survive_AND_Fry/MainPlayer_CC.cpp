@@ -126,13 +126,13 @@ bool AMainPlayer_CC::TraceObject()
 
 		if (IsHit == true)
 		{
-			//CharacterMesh->SetMaterial(0, TraceMaterial);
+			CharacterMesh->SetMaterial(0, TraceMaterial);
 			
 			return true;
 		}
 		else
 		{
-			//CharacterMesh->SetMaterial(0, NormalMaterial);
+			CharacterMesh->SetMaterial(0, NormalMaterial);
 			return false;
 		}
 	}

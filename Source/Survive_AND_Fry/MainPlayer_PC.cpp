@@ -67,10 +67,26 @@ void AMainPlayer_PC::WaveTimerDelegate()
 {
 	TimeLeft -= 1;
 
-	if (TimeLeft <= 0)
+	if (TimeLeft <= 0 && ZombiesSaved > 0)
 	{
 		DisableInput(this);
 		CreateGameOverWidget();
+	}
+	else if (TimeLeft > 0 && ZombiesSaved <= 0)
+	{
+		DisableInput(this);
+		CreateGameWinWidget();
+	}
+}
+
+void AMainPlayer_PC::CreateGameWinWidget()
+{
+	GameWinWidget = CreateWidget(this, GameWinWidgetClass);
+
+	if (GameWinWidget != nullptr)
+	{
+		SetShowMouseCursor(true);
+		GameWinWidget->AddToViewport();
 	}
 }
 
@@ -82,19 +98,5 @@ void AMainPlayer_PC::CreateGameOverWidget()
 	{
 		SetShowMouseCursor(true);
 		GameOverWidget->AddToViewport();
-	}
-}
-
-void AMainPlayer_PC::RestartMainLevel()
-{
-	UGameplayStatics::OpenLevel(this, "Main");
-}
-
-void AMainPlayer_PC::QuitToMainMenu()
-{
-	if (GameOverWidget != nullptr)
-	{
-		GameOverWidget->RemoveFromParent();
-		UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 	}
 }
