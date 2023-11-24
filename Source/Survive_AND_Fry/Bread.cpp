@@ -124,7 +124,7 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 						AntiDoteEffect->Activate();
 						GetWorldTimerManager().UnPauseTimer(AntiDoteTimerHandle);
 					}
-					AntiDoteMesh->SetVisibility(true, true);
+					AntiDoteMesh->SetVisibility(false, true);
 				}
 			}
 		}

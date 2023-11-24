@@ -90,7 +90,8 @@ void AServingDesk::ServeItem()
 				if (MainPlayer_PC != nullptr)
 				{
 					MainPlayer_PC->SetTaskDescription(RandomScale, RandomIngredients);
-					MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved + 1;
+					MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved - 1;
+					MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft + 5.f;
 					if (SuccessfullServeEffect != nullptr)
 					{
 						SuccessfullServeEffect->Activate();
@@ -141,7 +142,8 @@ void AServingDesk::ServeItem()
 				if (MainPlayer_PC != nullptr)
 				{
 					MainPlayer_PC->SetTaskDescription(RandomScale, RandomIngredients);
-					MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved + 1;
+					MainPlayer_PC->ZombiesSaved = MainPlayer_PC->ZombiesSaved - 1;
+					MainPlayer_PC->TimeLeft = MainPlayer_PC->TimeLeft + 5.f;
 					if (SuccessfullServeEffect != nullptr)
 					{
 						SuccessfullServeEffect->Activate();
