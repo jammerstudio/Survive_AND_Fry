@@ -66,6 +66,8 @@ private:
 
 	FHitResult Hit;
 
+	bool IsHit;
+
 	class AItemDesk* ItemDesk;
 
 	class AChoppingDesk* ChoppingDesk;

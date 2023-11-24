@@ -36,4 +36,5 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
 	bool NeedToRespawn = false;
 private:
+
 };

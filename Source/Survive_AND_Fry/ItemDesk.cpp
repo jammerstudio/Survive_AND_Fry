@@ -1,5 +1,7 @@
 #include "ItemDesk.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "MainPlayer_CC.h"
 
 AItemDesk::AItemDesk()
 {
@@ -24,4 +26,3 @@ void AItemDesk::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
