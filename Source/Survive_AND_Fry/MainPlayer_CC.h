@@ -29,6 +29,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	bool IsHolding = false;
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	bool IsChopping = false;
+
 	void SetTaskDescription(float CurrentScale);
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -41,6 +44,9 @@ private:
 	float SphereSize = 15.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	class UStaticMeshComponent* Knife;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	class USceneComponent* HoldingLocation;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
@@ -51,9 +57,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UMaterialInterface* TraceMaterial;
-
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	bool IsChopping = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	float MoveSpeed = 300.f;
@@ -76,7 +79,6 @@ private:
 
 	void GrabORRelease();
 	void StartChopping();
-	void RemoveItem();
 
 	bool TraceObject();
 	void DeskFunctions(class AActor* Desk);

@@ -16,6 +16,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	bool SpawnChoppedActor = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	class UStaticMeshComponent* Knife;
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* ChoppingBoard;

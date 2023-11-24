@@ -7,6 +7,7 @@
 #include "AntiDote.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Engine/StaticMesh.h"
 
 ABread::ABread()
 {
@@ -18,8 +19,11 @@ ABread::ABread()
 	BreadBottom = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BreadBottom"));
 	BreadBottom->SetupAttachment(RootSceneComponent);
 
-	VegetableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Vegetable"));
-	VegetableMesh->SetupAttachment(RootSceneComponent);
+	TomatoVegetableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tomato"));
+	TomatoVegetableMesh->SetupAttachment(RootSceneComponent);
+
+	LettuceVegetableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lettuce"));
+	LettuceVegetableMesh->SetupAttachment(RootSceneComponent);
 
 	AntiDoteMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AntiDote"));
 	AntiDoteMesh->SetupAttachment(RootSceneComponent);
@@ -32,9 +36,13 @@ void ABread::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (VegetableMesh != nullptr)
+	if (TomatoVegetableMesh != nullptr)
 	{
-		VegetableMesh->SetVisibility(false, true);
+		TomatoVegetableMesh->SetVisibility(false, true);
+	}
+	if (LettuceVegetableMesh != nullptr)
+	{
+		LettuceVegetableMesh->SetVisibility(false, true);
 	}
 	if (AntiDoteMesh != nullptr)
 	{
@@ -65,9 +73,9 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 				HasTomato = true;
 				ChoppedTomato->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 				ChoppedTomato->Destroy();
-				if (VegetableMesh != nullptr)
+				if (TomatoVegetableMesh != nullptr)
 				{
-					VegetableMesh->SetVisibility(true, true);
+					TomatoVegetableMesh->SetVisibility(true, true);
 				}
 			}
 		}
@@ -87,9 +95,9 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 				HasLettuce = true;
 				ChoppedLettuce->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 				ChoppedLettuce->Destroy();
-				if (VegetableMesh != nullptr)
+				if (LettuceVegetableMesh != nullptr)
 				{
-					VegetableMesh->SetVisibility(true, true);
+					LettuceVegetableMesh->SetVisibility(true, true);
 				}
 			}
 		}
