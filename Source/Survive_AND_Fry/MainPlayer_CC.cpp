@@ -13,6 +13,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Bread.h"
 #include "TimerManager.h"
+#include "Components/PrimitiveComponent.h"
 
 AMainPlayer_CC::AMainPlayer_CC()
 {
@@ -120,19 +121,25 @@ bool AMainPlayer_CC::TraceObject()
 		FVector Start = PlayerTracePointer->GetComponentLocation();
 		FVector End = PlayerTracePointer->GetComponentLocation() + PlayerTracePointer->GetForwardVector() * TraceDistance;
 
-		bool IsHit = GetWorld()->SweepSingleByChannel(Hit, Start, End, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(SphereSize));
+		IsHit = GetWorld()->SweepSingleByChannel(Hit, Start, End, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(SphereSize));
 
 		DrawDebugSphere(GetWorld(), End, SphereSize, 12, FColor::Red, false);
 
 		if (IsHit == true)
 		{
-			CharacterMesh->SetMaterial(0, TraceMaterial);
-			
+			ItemDesk = Cast<AItemDesk>(Hit.GetActor());
+			if (ItemDesk != nullptr)
+			{
+				ItemDesk->Desk->SetRenderCustomDepth(true);
+			}
 			return true;
 		}
 		else
 		{
-			CharacterMesh->SetMaterial(0, NormalMaterial);
+			if (ItemDesk != nullptr)
+			{
+				ItemDesk->Desk->SetRenderCustomDepth(false);
+			}
 			return false;
 		}
 	}
