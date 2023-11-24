@@ -2,6 +2,7 @@
 #include "Engine/World.h"
 #include "Components/ArrowComponent.h"
 #include "Components/MeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "ItemDesk.h"
@@ -17,6 +18,9 @@ AMainPlayer_CC::AMainPlayer_CC()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	Knife = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Knife"));
+	Knife->SetupAttachment(GetMesh());
+
 	HoldingLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Holding Location"));
 	HoldingLocation->SetupAttachment(RootComponent);
 
@@ -27,6 +31,12 @@ AMainPlayer_CC::AMainPlayer_CC()
 void AMainPlayer_CC::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (Knife != nullptr)
+	{
+		Knife->SetVisibility(false);
+		Knife->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Knife"));
+	}
 
 	SetTaskDescription(0.f);
 
@@ -48,10 +58,8 @@ void AMainPlayer_CC::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AMainPlayer_CC::MoveRight);
 
 	PlayerInputComponent->BindAction(TEXT("Grab/Release"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::GrabORRelease);
-	//PlayerInputComponent->BindAction(TEXT("Chop"), EInputEvent::IE_Repeat, this, &AMainPlayer_CC::StartChopping);
 	PlayerInputComponent->BindAction(TEXT("ConfirmOrder"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::ProcessServing);
 	PlayerInputComponent->BindAction(TEXT("ScaleItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::EnlargeItem);
-	PlayerInputComponent->BindAction(TEXT("RemoveItem"), EInputEvent::IE_Pressed, this, &AMainPlayer_CC::RemoveItem);
 
 	FRotator MovementRotation = GetVelocity().Rotation();
 	SetActorRotation(MovementRotation);
@@ -101,22 +109,6 @@ void AMainPlayer_CC::StartChopping()
 			}
 		}
 	}
-}
-
-void AMainPlayer_CC::RemoveItem()
-{
-	if (HoldingItem != nullptr)
-	{
-		if (ServingDesk->ItemOnDesk == nullptr && HoldingItem == ServingDesk->Bread)
-		{
-			SetTaskDescription(0.f);
-		}
-		HoldingItem->Destroy();
-		HoldingItem = nullptr;
-		IsHolding = false;
-	}
-	else
-		return;
 }
 
 bool AMainPlayer_CC::TraceObject()
@@ -170,6 +162,7 @@ void AMainPlayer_CC::DeskFunctions(AActor* Desk)
 				HoldingItem = ItemDesk->ItemOnDesk;
 				HoldingItem->AttachToComponent(HoldingLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 				IsHolding = true;
+
 				if (ItemDesk->NeedToRespawn == true)
 				{
 					ItemDesk->ItemOnDesk = GetWorld()->SpawnActor<AActor>(ItemDesk->ItemOnDeskReference,
@@ -222,13 +215,20 @@ void AMainPlayer_CC::ProcessChopping()
 				AMainPlayer_PC* MainPlayer_PC = Cast<AMainPlayer_PC>(MainPlayer_PC_Reference);
 				if (MainPlayer_PC != nullptr)
 				{
-					if (ItemToBeChopped->CanBeChopped == true && MainPlayer_PC->IsInputKeyDown(EKeys::LeftControl))
+					if (ItemToBeChopped->CanBeChopped == true && MainPlayer_PC->IsInputKeyDown(EKeys::LeftControl) && Knife != nullptr && ChoppingDesk->Knife != nullptr)
 					{
+						ChoppingDesk->Knife->SetVisibility(false);
+						Knife->SetVisibility(true);
 						IsChopping = true;
-						ItemToBeChopped->ChopItem(GetWorld()->DeltaTimeSeconds * 3.f);
+						ItemToBeChopped->ChopItem(GetWorld()->DeltaTimeSeconds * 5.f);
 					}
 					else
 					{
+						if (Knife != nullptr && ChoppingDesk->Knife != nullptr)
+						{
+							Knife->SetVisibility(false);
+							ChoppingDesk->Knife->SetVisibility(true);
+						}
 						IsChopping = false;
 					}
 				}

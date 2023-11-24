@@ -37,7 +37,10 @@ private:
 	class UStaticMeshComponent* BreadBottom;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
-	class UStaticMeshComponent* VegetableMesh;
+	class UStaticMeshComponent* TomatoVegetableMesh;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	class UStaticMeshComponent* LettuceVegetableMesh;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UStaticMeshComponent* AntiDoteMesh;
