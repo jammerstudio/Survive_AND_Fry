@@ -14,6 +14,7 @@
 #include "Bread.h"
 #include "TimerManager.h"
 #include "Components/PrimitiveComponent.h"
+#include "Components/AudioComponent.h"
 
 AMainPlayer_CC::AMainPlayer_CC()
 {
@@ -222,8 +223,17 @@ void AMainPlayer_CC::ProcessChopping()
 				AMainPlayer_PC* MainPlayer_PC = Cast<AMainPlayer_PC>(MainPlayer_PC_Reference);
 				if (MainPlayer_PC != nullptr)
 				{
-					if (ItemToBeChopped->CanBeChopped == true && MainPlayer_PC->IsInputKeyDown(EKeys::LeftControl) && Knife != nullptr && ChoppingDesk->Knife != nullptr)
+					if (ChoppingSound != nullptr && ItemToBeChopped->CanBeChopped == true && MainPlayer_PC->IsInputKeyDown(EKeys::LeftControl) && Knife != nullptr && ChoppingDesk->Knife != nullptr)
 					{
+
+						UAudioComponent* ChopSoundReference = UGameplayStatics::SpawnSound2D(GetWorld(), ChoppingSound);
+						if (ChopSoundReference != nullptr)
+						{
+							if (ChopSoundReference->IsPlaying() == false)
+							{
+								ChopSoundReference->Play();
+							}
+						}
 						ChoppingDesk->Knife->SetVisibility(false);
 						Knife->SetVisibility(true);
 						IsChopping = true;
