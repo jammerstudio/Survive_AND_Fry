@@ -59,6 +59,9 @@ private:
 	UMaterialInterface* TraceMaterial;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	USoundBase* ChoppingSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	float MoveSpeed = 300.f;
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))

@@ -58,6 +58,9 @@ private:
 
 	class AAntiDote* AntiDote;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	class USoundBase* AntiDoteSound;
+
 	float TimeOut = 0.f;
 
 	void DisableEffects();

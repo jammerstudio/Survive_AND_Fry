@@ -119,6 +119,10 @@ void ABread::CombineItems(AMainPlayer_CC* MainPlayer, AActor* SecondItem)
 				AntiDote->Destroy();
 				if (AntiDoteMesh != nullptr)
 				{
+					if (AntiDoteSound != nullptr)
+					{
+						UGameplayStatics::PlaySound2D(GetWorld(), AntiDoteSound);
+					}
 					if (AntiDoteEffect != nullptr)
 					{
 						AntiDoteEffect->Activate();

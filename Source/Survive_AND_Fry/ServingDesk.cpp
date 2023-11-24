@@ -129,7 +129,7 @@ void AServingDesk::ServeItem()
 				Bread->Destroy();
 			}
 		}
-		if (RandomIngredients == 2)
+		else if (RandomIngredients == 2)
 		{
 			if (Bread->HasLettuce == true && Bread->HasAntiDote == true && RandomScale == ScaleValue)
 			{
