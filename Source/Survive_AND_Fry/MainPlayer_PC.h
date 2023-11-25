@@ -10,7 +10,7 @@ class SURVIVE_AND_FRY_API AMainPlayer_PC : public APlayerController
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int TimeLeft;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
