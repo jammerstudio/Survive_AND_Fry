@@ -19,4 +19,7 @@ private:
 	FTimerHandle ActorRemoverTimer;
 
 	void DeleteActor();
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	class USoundBase* GarbageSound;
 };

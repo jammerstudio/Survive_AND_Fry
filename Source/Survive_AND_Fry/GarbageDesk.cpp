@@ -1,4 +1,5 @@
 #include "GarbageDesk.h"
+#include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 
 AGarbageDesk::AGarbageDesk()
@@ -15,8 +16,9 @@ void AGarbageDesk::BeginPlay()
 
 void AGarbageDesk::DeleteActor()
 {
-	if (ItemOnDesk != nullptr)
+	if (ItemOnDesk != nullptr && GarbageSound != nullptr)
 	{
+		UGameplayStatics::PlaySound2D(GetWorld(), GarbageSound);
 		ItemOnDesk->Destroy();
 		ItemOnDesk = nullptr;
 	}

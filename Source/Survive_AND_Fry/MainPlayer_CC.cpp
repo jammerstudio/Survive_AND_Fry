@@ -318,18 +318,18 @@ void AMainPlayer_CC::SetTaskDescription(float CurrentScale)
 {
 	if (CurrentScale == 0.f)
 	{
-		CurrentScaleDescription = ("CURRENT SCALE\nN/A");
+		CurrentScaleDescription = ("CURRENT SCALE\n");
 	}
 	if (CurrentScale == 1.f)
 	{
-		CurrentScaleDescription = ("CURRENT SCALE\n1X");
+		CurrentScaleDescription = ("CURRENT SCALE\n1x");
 	}
 	if (CurrentScale == 2.f)
 	{
-		CurrentScaleDescription = ("CURRENT SCALE\n2X");
+		CurrentScaleDescription = ("CURRENT SCALE\n2x");
 	}
 	if (CurrentScale == 3.f)
 	{
-		CurrentScaleDescription = ("CURRENT SCALE\n3X");
+		CurrentScaleDescription = ("CURRENT SCALE\n3x");
 	}
 }
