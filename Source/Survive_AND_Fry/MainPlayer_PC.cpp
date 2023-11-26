@@ -56,7 +56,6 @@ void AMainPlayer_PC::BeginPlay()
 		HUDWidget->AddToViewport();
 	}
 	GetWorldTimerManager().SetTimer(WaveTimer, this, &AMainPlayer_PC::WaveTimerDelegate, 1.f, true);
-	GetWorldTimerManager().SetTimer(SoundTimer, this, &AMainPlayer_PC::SoundTimerDelegate, 10.f, true);
 
 	AActor* CameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), WorldCameraClass);
 
@@ -64,11 +63,8 @@ void AMainPlayer_PC::BeginPlay()
 	{
 		SetViewTargetWithBlend(CameraActor, 3.f, EViewTargetBlendFunction::VTBlend_Linear);
 	}
-	if (GameplayAudio_001 != nullptr)
-	{
-		GameplayAudio = UGameplayStatics::SpawnSound2D(GetWorld(), GameplayAudio_001);
-	}
 }
+
 void AMainPlayer_PC::WaveTimerDelegate()
 {
 	TimeLeft -= 1;
@@ -84,15 +80,6 @@ void AMainPlayer_PC::WaveTimerDelegate()
 		DisableInput(this);
 		CreateGameWinWidget();
 		GetWorldTimerManager().PauseTimer(WaveTimer);
-	}
-}
-
-void AMainPlayer_PC::SoundTimerDelegate()
-{
-	if (TimeLeft <= 100 && GameplayAudio != nullptr && GameplayAudio_002 != nullptr)
-	{
-		GameplayAudio->SetSound(GameplayAudio_002);
-		GetWorldTimerManager().ClearTimer(SoundTimer);
 	}
 }
 
