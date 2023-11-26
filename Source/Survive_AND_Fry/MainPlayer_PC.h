@@ -24,6 +24,14 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	USoundBase* GameplayAudio_001;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	USoundBase* GameplayAudio_002;
+
+	UAudioComponent* GameplayAudio;
+
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<class UUserWidget> HUDWidgetClass;
 
@@ -37,11 +45,13 @@ private:
 	TSubclassOf <class AActor> WorldCameraClass;
 
 	FTimerHandle WaveTimer;
+	FTimerHandle SoundTimer;
 
 	UUserWidget* GameWinWidget;
 	UUserWidget* GameOverWidget;
 
 	void WaveTimerDelegate();
+	void SoundTimerDelegate();
 	void CreateGameWinWidget();
 	void CreateGameOverWidget();
 };
