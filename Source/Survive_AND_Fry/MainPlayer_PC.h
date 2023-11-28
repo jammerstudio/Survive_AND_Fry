@@ -17,6 +17,9 @@ public:
 	int ZombiesSaved = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int ZombiesNeedToBeSaved = 20;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FString TaskDescription;
 
 	void SetTaskDescription(int32 TaskNumber, int32 IngredientNumber);

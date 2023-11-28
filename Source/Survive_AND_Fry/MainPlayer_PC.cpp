@@ -69,13 +69,13 @@ void AMainPlayer_PC::WaveTimerDelegate()
 {
 	TimeLeft -= 1;
 
-	if (TimeLeft <= 0 && ZombiesSaved > 0)
+	if (TimeLeft <= 0 && ZombiesSaved < ZombiesNeedToBeSaved)
 	{
 		DisableInput(this);
 		CreateGameOverWidget();
 		GetWorldTimerManager().PauseTimer(WaveTimer);
 	}
-	else if (TimeLeft > 0 && ZombiesSaved <= 0)
+	else if (TimeLeft > 0 && ZombiesSaved >= ZombiesNeedToBeSaved)
 	{
 		DisableInput(this);
 		CreateGameWinWidget();
